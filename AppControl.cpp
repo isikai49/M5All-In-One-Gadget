@@ -8,6 +8,7 @@ MdMusicPlayer mmplay;
 MdMeasureDistance mmdist;
 MdDateTime mdtime;
 
+
 const char *g_str_orange[] = {
     COMMON_ORANGE0_IMG_PATH,
     COMMON_ORANGE1_IMG_PATH,
@@ -105,12 +106,12 @@ void AppControl::displayMenuInit()
     mlcd.displayJpgImageCoordinate(MENU_DATE_IMG_PATH, MENU_DATE_X_CRD, MENU_DATE_Y_CRD);
     mlcd.displayJpgImageCoordinate(COMMON_BUTTON_UP_IMG_PATH, MENU_UP_X_CRD, MENU_UP_Y_CRD);
     mlcd.displayJpgImageCoordinate(COMMON_BUTTON_DECIDE_IMG_PATH, MENU_DECIDE_X_CRD, MENU_DECIDE_Y_CRD);
-    mlcd.displayJpgImageCoordinate(COMMON_BUTTON_DOWN_IMG_PATH, MENU_DOWN_X_CRD, MENU_DOWN_Y_CRD);   
+    mlcd.displayJpgImageCoordinate(COMMON_BUTTON_DOWN_IMG_PATH, MENU_DOWN_X_CRD, MENU_DOWN_Y_CRD);
 }
 
 void AppControl::focusChangeImg(FocusState current_state, FocusState next_state)
 {
-switch (current_state)
+    switch (current_state)
     {
     case MENU_WBGT:
         mlcd.displayJpgImageCoordinate(MENU_WBGT_IMG_PATH, MENU_WBGT_X_CRD, MENU_WBGT_Y_CRD);
@@ -187,19 +188,22 @@ void AppControl::displayMeasureDistance()
 
 void AppControl::displayDateInit()
 {
+    mlcd.fillBackgroundWhite();
+    mlcd.displayJpgImageCoordinate(DATE_NOTICE_IMG_PATH, DATE_NOTICE_X_CRD, DATE_NOTICE_Y_CRD);
+    mlcd.displayJpgImageCoordinate(COMMON_BUTTON_BACK_IMG_PATH, DATE_BACK_X_CRD, DATE_BACK_Y_CRD);
 }
 
 void AppControl::displayDateUpdate()
 {
+    mlcd.displayDateText(mdtime.readDate(),DATE_YYYYMMDD_X_CRD, DATE_YYYYMMDD_Y_CRD);
+    mlcd.displayDateText(mdtime.readTime(), DATE_HHmmSS_X_CRD, DATE_HHmmSS_Y_CRD);
 }
-
 
 void AppControl::controlApplication()
 {
     mmplay.init();
     while (1)
     {
-
         switch (getState())
         {
         case TITLE:
@@ -239,85 +243,92 @@ void AppControl::controlApplication()
             switch (getAction())
             {
             case ENTRY:
-                mlcd.clearDisplay();
+            mlcd.clearDisplay();
                 displayMenuInit();
+                setFocusState(MENU_WBGT);
                 setStateMachine(MENU, DO);
                 break;
 
             case DO:
                 if (m_flag_btnA_is_pressed)
                 {
-                switch(getFocusState())
-                {
-                case MENU_WBGT:
-                    focusChangeImg(getFocusState(),MENU_DATE);
-                    setFocusState(MENU_DATE);
-                    break;
+                    switch (getFocusState())
+                    {
+                    case MENU_WBGT:
+                        focusChangeImg(getFocusState(), MENU_DATE);
+                        setFocusState(MENU_DATE);
+                        break;
 
-                case MENU_MUSIC:
-                    focusChangeImg(getFocusState(),MENU_WBGT);
-                    setFocusState(MENU_WBGT);
-                    break;
+                    case MENU_MUSIC:
+                        focusChangeImg(getFocusState(), MENU_WBGT);
+                        setFocusState(MENU_WBGT);
+                        break;
 
-                case MENU_MEASURE:
-                    focusChangeImg(getFocusState(),MENU_MUSIC);
-                    setFocusState(MENU_MUSIC);
-                    break;
+                    case MENU_MEASURE:
+                        focusChangeImg(getFocusState(), MENU_MUSIC);
+                        setFocusState(MENU_MUSIC);
+                        break;
 
-                case MENU_DATE:
-                    focusChangeImg(getFocusState(),MENU_MEASURE);
-                    setFocusState(MENU_MEASURE);
-                    break;
-                }
+                    case MENU_DATE:
+                        focusChangeImg(getFocusState(), MENU_MEASURE);
+                        setFocusState(MENU_MEASURE);
+                        break;
+                    }
                 }
                 else if (m_flag_btnB_is_pressed)
                 {
-                switch(getFocusState())
-                {
-                case MENU_WBGT:
-                    break;
-
-                case MENU_MUSIC:
-                    break;
-
-                case MENU_MEASURE:
-                    break;
-
-                case MENU_DATE:
-                    break;
-                }    
+                    setStateMachine(MENU, EXIT);
                 }
+
                 else if (m_flag_btnC_is_pressed)
                 {
-                 switch(getFocusState())
-                {
-                case MENU_WBGT:
-                    focusChangeImg(getFocusState(),MENU_MUSIC);
-                    setFocusState(MENU_MUSIC);
-                    break;
+                    switch (getFocusState())
+                    {
+                    case MENU_WBGT:
+                        focusChangeImg(getFocusState(), MENU_MUSIC);
+                        setFocusState(MENU_MUSIC);
+                        break;
 
-                case MENU_MUSIC:
-                    focusChangeImg(getFocusState(),MENU_MEASURE);
-                    setFocusState(MENU_MEASURE);
-                    break;
+                    case MENU_MUSIC:
+                        focusChangeImg(getFocusState(), MENU_MEASURE);
+                        setFocusState(MENU_MEASURE);
+                        break;
 
-                case MENU_MEASURE:
-                    focusChangeImg(getFocusState(),MENU_DATE);
-                    setFocusState(MENU_DATE);
-                    break;
+                    case MENU_MEASURE:
+                        focusChangeImg(getFocusState(), MENU_DATE);
+                        setFocusState(MENU_DATE);
+                        break;
 
-                case MENU_DATE:
-                    focusChangeImg(getFocusState(),MENU_WBGT);
-                    setFocusState(MENU_WBGT);
-                    break;
+                    case MENU_DATE:
+                        focusChangeImg(getFocusState(), MENU_WBGT);
+                        setFocusState(MENU_WBGT);
+                        break;
+                    }
                 }
-                }
+                setBtnAllFlgFalse();
 
-                setStateMachine(MENU, EXIT);
                 break;
 
             case EXIT:
-                setBtnAllFlgFalse();
+                
+                switch (getFocusState())
+                    {
+                    case MENU_WBGT:
+                        setStateMachine(WBGT, ENTRY);
+                        break;
+
+                    case MENU_MUSIC:
+                        setStateMachine(MUSIC_STOP, ENTRY);
+                        break;
+
+                    case MENU_MEASURE:
+                        setStateMachine(MEASURE, ENTRY);
+                        break;
+
+                    case MENU_DATE:
+                        setStateMachine(DATE, ENTRY);
+                        break;
+                    }
                 break;
             default:
                 break;
@@ -387,6 +398,8 @@ void AppControl::controlApplication()
             switch (getAction())
             {
             case ENTRY:
+            mlcd.clearDisplay();
+                setStateMachine(MEASURE, DO);
                 break;
 
             case DO:
@@ -406,12 +419,24 @@ void AppControl::controlApplication()
             switch (getAction())
             {
             case ENTRY:
+            mlcd.clearDisplay();
+                displayDateInit();
+                setStateMachine(DATE, DO);
                 break;
 
             case DO:
+            if (m_flag_btnB_is_pressed){
+                setStateMachine(DATE, EXIT);
+            }
+            else{
+                displayDateUpdate();
+                delay(100);
+            }
                 break;
 
             case EXIT:
+                setStateMachine(MENU, ENTRY);
+                setBtnAllFlgFalse();
                 break;
 
             default:

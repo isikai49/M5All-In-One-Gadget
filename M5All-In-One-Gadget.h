@@ -84,22 +84,16 @@
 // MENU jpg image coordinate
 #define MENU_WBGT_X_CRD 0
 #define MENU_WBGT_Y_CRD 0
-
 #define MENU_MUSIC_X_CRD 0
 #define MENU_MUSIC_Y_CRD 50
-
 #define MENU_MEASURE_X_CRD 0
 #define MENU_MEASURE_Y_CRD 100
-
 #define MENU_DATE_X_CRD 0
 #define MENU_DATE_Y_CRD 150
-
 #define MENU_UP_X_CRD 0
 #define MENU_UP_Y_CRD 200
-
 #define MENU_DECIDE_X_CRD 120
 #define MENU_DECIDE_Y_CRD 200
-
 #define MENU_DOWN_X_CRD 240
 #define MENU_DOWN_Y_CRD 200
 
@@ -110,6 +104,14 @@
 // Measure jpg image coordinate
 
 // Date jpg image coordinate
+#define DATE_NOTICE_X_CRD 0
+#define DATE_NOTICE_Y_CRD 0
+#define DATE_YYYYMMDD_X_CRD 10
+#define DATE_YYYYMMDD_Y_CRD 100
+#define DATE_HHmmSS_X_CRD 40
+#define DATE_HHmmSS_Y_CRD 150
+#define DATE_BACK_X_CRD 120
+#define DATE_BACK_Y_CRD 200
 
 typedef enum {
     TITLE,
