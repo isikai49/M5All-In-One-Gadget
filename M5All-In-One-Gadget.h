@@ -77,11 +77,31 @@
 #define COMMON_BLUEDOT_IMG_PATH "/images/common/blue_number/dot.jpg"
 #define COMMON_BLUEFILLWHITE_IMG_PATH "/images/common/blue_number/fillwhite.jpg"
 
+// TITLE jpg image coordinate
+#define TITLE_X_CRD 0
+#define TITLE_Y_CRD 0
+
 // MENU jpg image coordinate
 #define MENU_WBGT_X_CRD 0
 #define MENU_WBGT_Y_CRD 0
+
 #define MENU_MUSIC_X_CRD 0
 #define MENU_MUSIC_Y_CRD 50
+
+#define MENU_MEASURE_X_CRD 0
+#define MENU_MEASURE_Y_CRD 100
+
+#define MENU_DATE_X_CRD 0
+#define MENU_DATE_Y_CRD 150
+
+#define MENU_UP_X_CRD 0
+#define MENU_UP_Y_CRD 200
+
+#define MENU_DECIDE_X_CRD 120
+#define MENU_DECIDE_Y_CRD 200
+
+#define MENU_DOWN_X_CRD 240
+#define MENU_DOWN_Y_CRD 200
 
 // WBGT jpg image coordinate
 
