@@ -1,14 +1,13 @@
-/* インクルードガード */
 #pragma once
 #include <TinyGPS++.h>
 #include <TinyGPSPlus.h>
 
-class MdDateTime // classの定義
+class MdDateTime
 {
-private: // privateはクラス内からしかアクセスできない
+private:
     TinyGPSPlus gps;
 
-public: // publicはどこからでもアクセス可能
+public:
     MdDateTime();
     String readDate();
     String readTime();

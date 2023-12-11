@@ -1,13 +1,13 @@
-/* インクルードガード */
 #pragma once
 
 #include "M5All-In-One-Gadget.h"
 #include <Arduino.h>
 
-class MdLcd // classの定義
+class MdLcd
 {
-private: // privateはクラス内からしかアクセスできない
-public: // publicはどこからでもアクセス可能
+private:
+
+public:
     void displayJpgImage(const char* path);
     void displayJpgImageCoordinate(const char* path, uint16_t x, uint16_t y);
     void clearDisplay();

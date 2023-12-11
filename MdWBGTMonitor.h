@@ -1,8 +1,10 @@
-/* インクルードガード */
 #pragma once
 
-class MdWBGTMonitor // classの定義
+class MdWBGTMonitor
 {
-private: // privateはクラス内からしかアクセスできない
-public: // publicはどこからでもアクセス可能
+private:
+
+public:
+void init();
+void getWBGT(double* temperature, double* humidity, WbgtIndex* index);
 };
