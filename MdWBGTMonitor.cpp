@@ -1,4 +1,5 @@
 #include "MdWBGTMonitor.h"
+#include "M5All-In-One-Gadget.h"
 #include <Arduino.h>
 
 DrTHSensor dthsen;
@@ -10,23 +11,23 @@ void MdWBGTMonitor::init()
 
 void MdWBGTMonitor::getWBGT(double* temperature, double* humidity, WbgtIndex* index)
 {
-    dthsen.getTempHumi(double* temperature, double* humidity);
+    dthsen.getTempHumi(&temperature,&humidity);
 
-    index = 0.68 * temperature + 0.12 * humidity;
+    int calc_index = 0.68 * (*temperature) + 0.12 * (*humidity);
 
-    if(index <= 15){
-
+    if(calc_index <= 15){
+        *index = SAFE;
     }
-    else if(15 < index <= 24){
-
+    else if(15 < calc_index <= 24){
+        *index = ATTENTION;
     }
-    else if(24 < index <= 27){
-
+    else if(24 < calc_index <= 27){
+        *index = ALERT;
     }
-    else if(27 < index <= 30){
-
+    else if(27 < calc_index <= 30){
+        *index = HIGH_ALERT;
     }
-    else if(31 <= index){
-
+    else if(31 <= calc_index){
+        *index = DANGER;
     }
 }

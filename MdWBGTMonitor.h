@@ -1,5 +1,7 @@
 #pragma once
 
+DrTHSensor dthsen;
+
 class MdWBGTMonitor
 {
 private:

@@ -3,6 +3,6 @@
 MdMeasureDistance drul;
 
 double getDistance()
-{
+{double distance;
 return distance;
 }
