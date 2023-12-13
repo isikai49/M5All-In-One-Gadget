@@ -14,12 +14,12 @@ double DrUltraSonic::measureReturnTime()
   double t = 0;
 
   // 超音波の発生
-  digitalWrite(trig_pin, HIGH);
+  digitalWrite(m_trig_pin, HIGH);
   delayMicroseconds(10);
-  digitalWrite(trig_pin, LOW);
+  digitalWrite(m_trig_pin, LOW);
 
   // 返ってくるまでの時間測定
-  t = pulseIn(echo_pin, HIGH);
+  t = pulseIn(m_echo_pin, HIGH);
   if (t >= 0){
     t = (double)t * 340 * (0.000001) * 0.5 * 100;
   }

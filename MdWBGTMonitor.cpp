@@ -11,7 +11,7 @@ void MdWBGTMonitor::init()
 
 void MdWBGTMonitor::getWBGT(double* temperature, double* humidity, WbgtIndex* index)
 {
-    dthsen.getTempHumi(&temperature,&humidity);
+    dthsen.getTempHumi(temperature,humidity);
 
     int calc_index = 0.68 * (*temperature) + 0.12 * (*humidity);
 
