@@ -160,7 +160,6 @@ void AppControl::displayWBGTInit()
     mlcd.displayJpgImageCoordinate(WBGT_HUMIDITY_IMG_PATH, WBGT_HUMIDITY_X_CRD, WBGT_HUMIDITY_Y_CRD);
     mlcd.displayJpgImageCoordinate(COMMON_BLUEDOT_IMG_PATH, WBGT_HDOT_X_CRD, WBGT_HDOT_Y_CRD);
     mlcd.displayJpgImageCoordinate(WBGT_PERCENT_IMG_PATH, WBGT_PERCENT_X_CRD, WBGT_PERCENT_Y_CRD);
-    mlcd.displayJpgImageCoordinate(WBGT_SAFE_IMG_PATH, WBGT_NOTICE_X_CRD, WBGT_NOTICE_Y_CRD);
     mlcd.displayJpgImageCoordinate(COMMON_BUTTON_BACK_IMG_PATH, WBGT_BACK_X_CRD, WBGT_BACK_Y_CRD);
     displayTempHumiIndex();
 }
@@ -169,18 +168,58 @@ void AppControl::displayTempHumiIndex()
 {
     double t;
     double h;
-    int temp;
     WbgtIndex index;
+
     mwbgt.getWBGT(&t, &h, &index);
 
-    mlcd.displayJpgImageCoordinate(COMMON_ORANGEFILLWHITE_IMG_PATH, WBGT_T2DIGIT_X_CRD, WBGT_T2DIGIT_Y_CRD);
-    mlcd.displayJpgImageCoordinate(COMMON_ORANGEFILLWHITE_IMG_PATH, WBGT_T1DIGIT_X_CRD, WBGT_T1DIGIT_Y_CRD);
-    mlcd.displayJpgImageCoordinate(COMMON_ORANGEFILLWHITE_IMG_PATH, WBGT_T2DIGIT_X_CRD, WBGT_T2DIGIT_Y_CRD);
-    if(t >= 10){
-        mlcd.displayJpgImageCoordinate(g_str_orange[temp = t / 10], WBGT_T2DIGIT_X_CRD, WBGT_T2DIGIT_Y_CRD);
+    int temp = t * 10;
+    int humi = h * 10;
+    if (t >= 10)
+    {
+        mlcd.displayJpgImageCoordinate(g_str_orange[temp / 100], WBGT_T2DIGIT_X_CRD, WBGT_T2DIGIT_Y_CRD);
     }
-    
-    mlcd.displayJpgImageCoordinate(g_str_orange[temp = t % 10], WBGT_T1DIGIT_X_CRD, WBGT_T1DIGIT_Y_CRD);
+    else if (t < 10)
+    {
+        mlcd.displayJpgImageCoordinate(COMMON_ORANGEFILLWHITE_IMG_PATH, WBGT_T2DIGIT_X_CRD, WBGT_T2DIGIT_Y_CRD);
+    }
+    mlcd.displayJpgImageCoordinate(g_str_orange[(temp / 10) % 10], WBGT_T1DIGIT_X_CRD, WBGT_T1DIGIT_Y_CRD);
+
+    mlcd.displayJpgImageCoordinate(g_str_orange[temp % 10], WBGT_T1DECIMAL_X_CRD, WBGT_T1DECIMAL_Y_CRD);
+
+    if (h >= 10)
+    {
+        mlcd.displayJpgImageCoordinate(g_str_blue[humi / 100], WBGT_H2DIGIT_X_CRD, WBGT_H2DIGIT_Y_CRD);
+    }
+    else if (h < 10)
+    {
+        mlcd.displayJpgImageCoordinate(COMMON_BLUEFILLWHITE_IMG_PATH, WBGT_H2DIGIT_X_CRD, WBGT_H2DIGIT_Y_CRD);
+    }
+    mlcd.displayJpgImageCoordinate(g_str_blue[(humi / 10) % 10], WBGT_H1DIGIT_X_CRD, WBGT_H1DIGIT_Y_CRD);
+
+    mlcd.displayJpgImageCoordinate(g_str_blue[humi % 10], WBGT_H1DECIMAL_X_CRD, WBGT_H1DECIMAL_Y_CRD);
+
+    switch (index)
+    {
+    case SAFE:
+        mlcd.displayJpgImageCoordinate(WBGT_SAFE_IMG_PATH, WBGT_NOTICE_X_CRD, WBGT_NOTICE_Y_CRD);
+        break;
+
+    case ATTENTION:
+        mlcd.displayJpgImageCoordinate(WBGT_ATTENTION_IMG_PATH, WBGT_NOTICE_X_CRD, WBGT_NOTICE_Y_CRD);
+        break;
+    case ALERT:
+        mlcd.displayJpgImageCoordinate(WBGT_ALERT_IMG_PATH, WBGT_NOTICE_X_CRD, WBGT_NOTICE_Y_CRD);
+        break;
+    case HIGH_ALERT:
+        mlcd.displayJpgImageCoordinate(WBGT_HIGH_ALERT_IMG_PATH, WBGT_NOTICE_X_CRD, WBGT_NOTICE_Y_CRD);
+        break;
+    case DANGER:
+        mlcd.displayJpgImageCoordinate(WBGT_DANGER_IMG_PATH, WBGT_NOTICE_X_CRD, WBGT_NOTICE_Y_CRD);
+        break;
+
+    default:
+        break;
+    }
 }
 
 void AppControl::displayMusicInit()
@@ -380,20 +419,20 @@ void AppControl::controlApplication()
             switch (getAction())
             {
             case ENTRY:
+                mwbgt.init();
                 displayWBGTInit();
                 setStateMachine(WBGT, DO);
                 break;
 
             case DO:
+                displayTempHumiIndex();
+                delay(100);
+
                 if (m_flag_btnB_is_pressed)
                 {
                     setStateMachine(WBGT, EXIT);
                 }
-                else
-                {
-                    displayTempHumiIndex();
-                    delay(100);
-                }
+                    
                 break;
 
             case EXIT:

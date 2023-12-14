@@ -20,8 +20,5 @@ double DrUltraSonic::measureReturnTime()
 
   // 返ってくるまでの時間測定
   t = pulseIn(m_echo_pin, HIGH);
-  if (t >= 0){
-    t = (double)t * 340 * (0.000001) * 0.5 * 100;
-  }
   return t;
 }

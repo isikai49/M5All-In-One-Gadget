@@ -18,13 +18,13 @@ void MdWBGTMonitor::getWBGT(double* temperature, double* humidity, WbgtIndex* in
     if(calc_index <= 15){
         *index = SAFE;
     }
-    else if(15 < calc_index <= 24){
+    else if((15 < calc_index)&&(calc_index <= 24)){
         *index = ATTENTION;
     }
-    else if(24 < calc_index <= 27){
+    else if((24 < calc_index)&&(calc_index <= 27)){
         *index = ALERT;
     }
-    else if(27 < calc_index <= 30){
+    else if((27 < calc_index)&&(calc_index <= 30)){
         *index = HIGH_ALERT;
     }
     else if(31 <= calc_index){
