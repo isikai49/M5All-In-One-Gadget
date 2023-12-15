@@ -5,8 +5,8 @@ DrUltraSonic::DrUltraSonic(int echo_pin, int trig_pin)
 {
   m_echo_pin = echo_pin;
   m_trig_pin = trig_pin;
-  pinMode(echo_pin, INPUT);
-  pinMode(trig_pin, OUTPUT);
+  pinMode(m_echo_pin, INPUT);
+  pinMode(m_trig_pin, OUTPUT);
 }
 
 double DrUltraSonic::measureReturnTime()

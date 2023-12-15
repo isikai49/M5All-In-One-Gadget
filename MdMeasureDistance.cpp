@@ -1,15 +1,15 @@
 #include "MdMeasureDistance.h"
 #include "DrUltraSonic.h"
+#include "M5All-In-One-Gadget.h"
 
-DrUltraSonic drul;
+DrUltraSonic drul = DrUltraSonic(ECHO_PIN, TRIG_PIN);
 
-double getDistance()
+double MdMeasureDistance::getDistance()
 {
     double distance = drul.measureReturnTime();
     if (distance >= 0)
     {
         distance = distance * 340 * (0.000001) * 0.5 * 100;
     }
-
     return distance;
 }

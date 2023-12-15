@@ -183,7 +183,6 @@ void AppControl::displayTempHumiIndex()
         mlcd.displayJpgImageCoordinate(COMMON_ORANGEFILLWHITE_IMG_PATH, WBGT_T2DIGIT_X_CRD, WBGT_T2DIGIT_Y_CRD);
     }
     mlcd.displayJpgImageCoordinate(g_str_orange[(temp / 10) % 10], WBGT_T1DIGIT_X_CRD, WBGT_T1DIGIT_Y_CRD);
-
     mlcd.displayJpgImageCoordinate(g_str_orange[temp % 10], WBGT_T1DECIMAL_X_CRD, WBGT_T1DECIMAL_Y_CRD);
 
     if (h >= 10)
@@ -195,7 +194,6 @@ void AppControl::displayTempHumiIndex()
         mlcd.displayJpgImageCoordinate(COMMON_BLUEFILLWHITE_IMG_PATH, WBGT_H2DIGIT_X_CRD, WBGT_H2DIGIT_Y_CRD);
     }
     mlcd.displayJpgImageCoordinate(g_str_blue[(humi / 10) % 10], WBGT_H1DIGIT_X_CRD, WBGT_H1DIGIT_Y_CRD);
-
     mlcd.displayJpgImageCoordinate(g_str_blue[humi % 10], WBGT_H1DECIMAL_X_CRD, WBGT_H1DECIMAL_Y_CRD);
 
     switch (index)
@@ -262,10 +260,41 @@ void AppControl::displayMusicPlay()
 
 void AppControl::displayMeasureInit()
 {
+    mlcd.fillBackgroundWhite();
+    mlcd.displayJpgImageCoordinate(MEASURE_NOTICE_IMG_PATH, MEASURE_NOTICE_X_CRD, MEASURE_NOTICE_Y_CRD);
+    mlcd.displayJpgImageCoordinate(COMMON_BLUEDOT_IMG_PATH, MEASURE_DOT_X_CRD, MEASURE_DOT_Y_CRD);
+    mlcd.displayJpgImageCoordinate(MEASURE_CM_IMG_PATH, MEASURE_CM_X_CRD, MEASURE_CM_Y_CRD);
+    mlcd.displayJpgImageCoordinate(COMMON_BUTTON_BACK_IMG_PATH, MEASURE_BACK_X_CRD, MEASURE_BACK_Y_CRD);
+    displayMeasureDistance();
 }
 
 void AppControl::displayMeasureDistance()
 {
+    double distance = mmdist.getDistance();
+    int dis = (int)(distance * 10);
+    
+    if ((2 <= distance) && (distance <= 450))
+    {
+        if (distance >= 100)
+        {
+            mlcd.displayJpgImageCoordinate(g_str_blue[dis / 1000], MEASURE_DIGIT3_X_CRD, MEASURE_DIGIT3_Y_CRD);
+        }
+        else if (distance < 100)
+        {
+            mlcd.displayJpgImageCoordinate(COMMON_ORANGEFILLWHITE_IMG_PATH, MEASURE_DIGIT3_X_CRD, MEASURE_DIGIT3_Y_CRD);
+        }
+
+        if (distance >= 10)
+        {
+            mlcd.displayJpgImageCoordinate(g_str_blue[(dis / 100) % 10], MEASURE_DIGIT2_X_CRD, MEASURE_DIGIT2_Y_CRD);
+        }
+        else if (distance < 10)
+        {
+            mlcd.displayJpgImageCoordinate(COMMON_ORANGEFILLWHITE_IMG_PATH, MEASURE_DIGIT2_X_CRD, MEASURE_DIGIT2_Y_CRD);
+        }
+        mlcd.displayJpgImageCoordinate(g_str_blue[(dis / 10) % 10], MEASURE_DIGIT1_X_CRD, MEASURE_DIGIT1_Y_CRD);
+        mlcd.displayJpgImageCoordinate(g_str_blue[dis % 10], MEASURE_DECIMAL_X_CRD, MEASURE_DECIMAL_Y_CRD);
+    }
 }
 
 void AppControl::displayDateInit()
@@ -432,7 +461,7 @@ void AppControl::controlApplication()
                 {
                     setStateMachine(WBGT, EXIT);
                 }
-                    
+
                 break;
 
             case EXIT:
@@ -525,12 +554,23 @@ void AppControl::controlApplication()
             switch (getAction())
             {
             case ENTRY:
+                displayMeasureInit();
+                setStateMachine(MEASURE, DO);
+
                 break;
 
             case DO:
+                displayMeasureDistance();
+                delay(250);
+                if (m_flag_btnB_is_pressed)
+                {
+                    setStateMachine(MEASURE, EXIT);
+                }
                 break;
 
             case EXIT:
+                setStateMachine(MENU, ENTRY);
+                setBtnAllFlgFalse();
                 break;
 
             default:
