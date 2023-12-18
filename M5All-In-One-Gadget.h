@@ -77,6 +77,41 @@
 #define COMMON_BLUEDOT_IMG_PATH "/images/common/blue_number/dot.jpg"
 #define COMMON_BLUEFILLWHITE_IMG_PATH "/images/common/blue_number/fillwhite.jpg"
 
+#define TRUMP_HIGH_IMG_PATH "/images/trump/high.jpg"
+#define TRUMP_LOW_IMG_PATH "/images/trump/low.jpg"
+#define TRUMP_ONEMORE_IMG_PATH "/images/trump/onemore.jpg"
+#define TRUMP_RECORD_IMG_PATH "/images/trump/record.jpg"
+#define TRUMP_START_IMG_PATH "/images/trump/start.jpg"
+
+#define TRUMP_TITLE_IMG_PATH "/images/trump/title.jpg"
+#define TRUMP_HIGHANDLOW_IMG_PATH "/images/trump/highandlow.jpg"
+
+#define TRUMP_WIN_IMG_PATH "/images/trump/win.jpg"
+#define TRUMP_LOSE_IMG_PATH "/images/trump/lose.jpg"
+
+#define TRUMP_SPADE_BACK_IMG_PATH "/images/trump/back.jpg"
+
+#define TRUMP_HEART1_IMG_PATH "/images/trump/heart/heart1.jpg"
+#define TRUMP_HEART2_IMG_PATH "/images/trump/heart/heart2.jpg"
+#define TRUMP_HEART3_IMG_PATH "/images/trump/heart/heart3.jpg"
+#define TRUMP_HEART4_IMG_PATH "/images/trump/heart/heart4.jpg"
+#define TRUMP_HEART5_IMG_PATH "/images/trump/heart/heart5.jpg"
+#define TRUMP_HEART6_IMG_PATH "/images/trump/heart/heart6.jpg"
+#define TRUMP_HEART7_IMG_PATH "/images/trump/heart/heart7.jpg"
+#define TRUMP_HEART8_IMG_PATH "/images/trump/heart/heart8.jpg"
+#define TRUMP_HEART9_IMG_PATH "/images/trump/heart/heart9.jpg"
+
+#define TRUMP_SPADE1_IMG_PATH "/images/trump/spade/spade1.jpg"
+#define TRUMP_SPADE2_IMG_PATH "/images/trump/spade/spade2.jpg"
+#define TRUMP_SPADE3_IMG_PATH "/images/trump/spade/spade3.jpg"
+#define TRUMP_SPADE4_IMG_PATH "/images/trump/spade/spade4.jpg"
+#define TRUMP_SPADE5_IMG_PATH "/images/trump/spade/spade5.jpg"
+#define TRUMP_SPADE6_IMG_PATH "/images/trump/spade/spade6.jpg"
+#define TRUMP_SPADE7_IMG_PATH "/images/trump/spade/spade7.jpg"
+#define TRUMP_SPADE8_IMG_PATH "/images/trump/spade/spade8.jpg"
+#define TRUMP_SPADE9_IMG_PATH "/images/trump/spade/spade9.jpg"
+
+
 // TITLE jpg image coordinate
 #define TITLE_X_CRD 0
 #define TITLE_Y_CRD 0
@@ -171,6 +206,31 @@
 #define DATE_BACK_X_CRD 120
 #define DATE_BACK_Y_CRD 200
 
+// HIGHANDLOW jpg image coordinate
+
+#define HIGHANDLOW_TITLE_X_CRD 0
+#define HIGHANDLOW_TITLE_Y_CRD 0
+#define HIGHANDLOW_START_X_CRD 0
+#define HIGHANDLOW_START_Y_CRD 200
+#define HIGHANDLOW_BACK_X_CRD 120
+#define HIGHANDLOW_BACK_Y_CRD 200
+#define HIGHANDLOW_RECORD_X_CRD 240
+#define HIGHANDLOW_RECORD_Y_CRD 200
+#define HIGHANDLOW_HIGH_X_CRD 0
+#define HIGHANDLOW_HIGH_Y_CRD 200
+#define HIGHANDLOW_LOW_X_CRD 240
+#define HIGHANDLOW_LOW_Y_CRD 200
+#define HIGHANDLOW_L_TRUMP_X_CRD 0
+#define HIGHANDLOW_L_TRUMP_Y_CRD 40
+#define HIGHANDLOW_R_TRUMP_X_CRD 0
+#define HIGHANDLOW_R_TRUMP_Y_CRD 200
+#define HIGHANDLOW_QUESTION_X_CRD 10
+#define HIGHANDLOW_QUESTION_Y_CRD 135
+#define HIGHANDLOW_WIN_X_CRD 70
+#define HIGHANDLOW_WIN_Y_CRD 135
+#define HIGHANDLOW_LOSE_X_CRD 100
+#define HIGHANDLOW_LOSE_Y_CRD 135
+
 typedef enum
 {
     TITLE,
@@ -179,7 +239,10 @@ typedef enum
     MUSIC_STOP,
     MUSIC_PLAY,
     MEASURE,
-    DATE
+    DATE,
+    HIGHANDLOW_TITLE,
+    HIGHANDLOW_GAME,
+    HIGHANDLOW_RECORD
 } State;
 
 typedef enum
@@ -194,7 +257,8 @@ typedef enum
     MENU_WBGT,
     MENU_MUSIC,
     MENU_MEASURE,
-    MENU_DATE
+    MENU_DATE,
+    MENU_HIGHANDLOW
 } FocusState;
 
 typedef enum

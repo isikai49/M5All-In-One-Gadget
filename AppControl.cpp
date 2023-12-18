@@ -34,6 +34,32 @@ const char *g_str_blue[] = {
     COMMON_BLUE9_IMG_PATH,
 };
 
+typedef enum
+{
+    TRUMP_HEART1_IMG_PATH = 1,
+    TRUMP_HEART2_IMG_PATH,
+    TRUMP_HEART3_IMG_PATH,
+    TRUMP_HEART4_IMG_PATH,
+    TRUMP_HEART5_IMG_PATH,
+    TRUMP_HEART6_IMG_PATH,
+    TRUMP_HEART7_IMG_PATH,
+    TRUMP_HEART8_IMG_PATH,
+    TRUMP_HEART9_IMG_PATH,
+}Heart;
+
+typedef enum
+{
+    TRUMP_SPADE1_IMG_PATH = 1,
+    TRUMP_SPADE2_IMG_PATH,
+    TRUMP_SPADE3_IMG_PATH,
+    TRUMP_SPADE4_IMG_PATH,
+    TRUMP_SPADE5_IMG_PATH,
+    TRUMP_SPADE6_IMG_PATH,
+    TRUMP_SPADE7_IMG_PATH,
+    TRUMP_SPADE8_IMG_PATH,
+    TRUMP_SPADE9_IMG_PATH,
+}Spade;
+
 void AppControl::setBtnAFlg(bool flg)
 {
     m_flag_btnA_is_pressed = flg;
@@ -271,8 +297,8 @@ void AppControl::displayMeasureInit()
 void AppControl::displayMeasureDistance()
 {
     double distance = mmdist.getDistance();
-    int dis = (int)(distance * 10);
-    
+    int dis = distance * 10;
+
     if ((2 <= distance) && (distance <= 450))
     {
         if (distance >= 100)
@@ -308,6 +334,29 @@ void AppControl::displayDateUpdate()
 {
     mlcd.displayDateText(mdtime.readDate(), DATE_YYYYMMDD_X_CRD, DATE_YYYYMMDD_Y_CRD);
     mlcd.displayDateText(mdtime.readTime(), DATE_HHmmSS_X_CRD, DATE_HHmmSS_Y_CRD);
+}
+
+void AppControl::displayHIGHANDLOWTitleInit()
+{
+    mlcd.fillBackgroundWhite();
+    mlcd.displayJpgImageCoordinate(TRUMP_TITLE_IMG_PATH, HIGHANDLOW_TITLE_X_CRD, HIGHANDLOW_TITLE_Y_CRD);
+    mlcd.displayJpgImageCoordinate(TRUMP_START_IMG_PATH, HIGHANDLOW_START_X_CRD, HIGHANDLOW_START_Y_CRD);
+    mlcd.displayJpgImageCoordinate(COMMON_BUTTON_BACK_IMG_PATH, HIGHANDLOW_BACK_X_CRD, HIGHANDLOW_BACK_Y_CRD);
+    mlcd.displayJpgImageCoordinate(TRUMP_RECORD_IMG_PATH, HIGHANDLOW_RECORD_X_CRD, HIGHANDLOW_RECORD_Y_CRD);
+}
+
+void AppControl::displayHIGHANDLOWPlayInit()
+{
+    mlcd.fillBackgroundWhite();
+    mlcd.displayJpgImageCoordinate(TRUMP_SPADE_BACK_IMG_PATH, HIGHANDLOW_R_TRUMP_X_CRD, HIGHANDLOW_R_TRUMP_Y_CRD);
+    mlcd.displayJpgImageCoordinate(TRUMP_HIGH_IMG_PATH, HIGHANDLOW_START_X_CRD, HIGHANDLOW_START_Y_CRD);
+    mlcd.displayJpgImageCoordinate(TRUMP_LOW_IMG_PATH, HIGHANDLOW_RECORD_X_CRD, HIGHANDLOW_RECORD_Y_CRD);
+}
+
+void AppControl::displayHIGHANDLOWRecord()
+{
+    mlcd.fillBackgroundWhite();
+    mlcd.displayJpgImageCoordinate(COMMON_BUTTON_BACK_IMG_PATH, HIGHANDLOW_BACK_X_CRD, HIGHANDLOW_BACK_Y_CRD);
 }
 
 void AppControl::controlApplication()
@@ -347,6 +396,10 @@ void AppControl::controlApplication()
             switch (getAction())
             {
             case ENTRY:
+                static int upcommand;
+                static int downcommand;
+                upcommand = 0;
+                downcommand = 0;
                 mlcd.clearDisplay();
                 displayMenuInit();
                 setFocusState(MENU_WBGT);
@@ -354,8 +407,16 @@ void AppControl::controlApplication()
                 break;
 
             case DO:
+
                 if (m_flag_btnA_is_pressed)
                 {
+                    if (downcommand >= 1)
+                    {
+                        upcommand = 0;
+                    }
+                    upcommand++;
+                    downcommand = 0;
+
                     switch (getFocusState())
                     {
                     case MENU_WBGT:
@@ -383,12 +444,18 @@ void AppControl::controlApplication()
 
                 else if (m_flag_btnB_is_pressed)
                 {
+                    if ((upcommand >= 2) && (downcommand == 2))
+                    {
+                        setFocusState(MENU_HIGHANDLOW);
+                        Serial.print("HIGHANDLOW OK");
+                    }
                     setStateMachine(MENU, EXIT);
                     setBtnAllFlgFalse();
                 }
 
                 else if (m_flag_btnC_is_pressed)
                 {
+                    downcommand++;
                     switch (getFocusState())
                     {
                     case MENU_WBGT:
@@ -433,6 +500,9 @@ void AppControl::controlApplication()
 
                 case MENU_DATE:
                     setStateMachine(DATE, ENTRY);
+                    break;
+                case MENU_HIGHANDLOW:
+                    setStateMachine(HIGHANDLOW, ENTRY);
                     break;
                 }
                 break;
@@ -528,7 +598,6 @@ void AppControl::controlApplication()
                 break;
 
             case DO:
-                mmplay.playMP3();
                 if (m_flag_btnA_is_pressed || (mmplay.playMP3() == false))
                 {
                     mmplay.stopMP3();
@@ -608,6 +677,104 @@ void AppControl::controlApplication()
             default:
                 break;
             }
+
+            break;
+
+        case HIGHANDLOW_TITLE:
+
+            switch (getAction())
+            {
+            case ENTRY:
+                displayHIGHANDLOWInit();
+                setStateMachine(HIGHANDLOW_TITLE, DO);
+                break;
+
+            case DO:
+                if (m_flag_btnC_is_pressed)
+                {
+                    setStateMachine(HIGHANDLOW_TITLE, EXIT);
+                }
+                else if (m_flag_btnB_is_pressed)
+                {
+                    setStateMachine(HIGHANDLOW_TITLE, EXIT);
+                }
+                else if (m_flag_btnA_is_pressed)
+                {
+                    setStateMachine(HIGHANDLOW_TITLE, EXIT);
+                }
+
+                break;
+
+            case EXIT:
+                if (m_flag_btnA_is_pressed)
+                {
+                    setStateMachine(HIGHANDLOW_GAME, ENTRY);
+                }
+                else if (m_flag_btnB_is_pressed)
+                {
+                    setStateMachine(MENU, ENTRY);
+                }
+                else if (m_flag_btnC_is_pressed)
+                {
+                    setStateMachine(HIGHANDLOW_RECORD, ENTRY);
+                }
+                setBtnAllFlgFalse();
+                break;
+
+            default:
+                break;
+            }
+            break;
+
+        case HIGHANDLOW_GAME:
+
+            switch (getAction())
+            {
+            case ENTRY:
+                displayHIGHANDLOWPlayInit();
+                setStateMachine(HIGHANDLOW_GAME, DO);
+                break;
+
+            case DO:
+                setStateMachine(HIGHANDLOW_GAME, EXIT);
+                break;
+
+            case EXIT:
+                setStateMachine(MENU, ENTRY);
+                setBtnAllFlgFalse();
+                break;
+
+            default:
+                break;
+            }
+            break;
+
+        case HIGHANDLOW_RECORD:
+
+            switch (getAction())
+            {
+            case ENTRY:
+                displayHIGHANDLOWRecord();
+                setStateMachine(HIGHANDLOW_RECORD, DO);
+                break;
+
+            if (m_flag_btnB_is_pressed)
+                {
+                    setStateMachine(HIGHANDLOW_RECORD, EXIT);
+                }
+
+            case EXIT:
+                if (m_flag_btnB_is_pressed)
+                {
+                    setStateMachine(HIGHANDLOW_TITLE, ENTRY);
+                    setBtnAllFlgFalse();
+                }
+                break;
+
+            default:
+                break;
+            }
+            break;
 
         default:
             break;

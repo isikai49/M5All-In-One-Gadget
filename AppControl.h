@@ -50,4 +50,7 @@ public: // publicはどこからでもアクセス可能
     void displayDateInit();
     void displayDateUpdate();
     void controlApplication();
+    void displayHIGHANDLOWTitleInit();
+    void displayHIGHANDLOWPlay();
+    void displayHIGHANDLOWRecord();
 };
