@@ -19,6 +19,9 @@ private: // privateはクラス内からしかアクセスできない
     State m_state = TITLE;
     Action m_action = ENTRY;
 
+    /* HighAndLow */
+    HighAndLowState hl_state = QUESTION;
+
     /* GUI State */
     FocusState m_focus_state = MENU_WBGT;
 
@@ -27,6 +30,8 @@ public: // publicはどこからでもアクセス可能
     void setState(State state);
     Action getAction();
     void setAction(Action action);
+    HighAndLowState getHighAndLowState();
+    void setHighAndLowState(HighAndLowState state);
     FocusState getFocusState();
     void setFocusState(FocusState fs);
 
@@ -51,6 +56,8 @@ public: // publicはどこからでもアクセス可能
     void displayDateUpdate();
     void controlApplication();
     void displayHIGHANDLOWTitleInit();
-    void displayHIGHANDLOWPlay();
+    void displayHIGHANDLOWPlayQuestion(int* trumpR);
+    void displayHIGHANDLOWPlayRandom(int* trumpL, int* trumpR);
+    void displayHIGHANDLOWPlayResult(HighAndLowState state, int* trumpL);
     void displayHIGHANDLOWRecord();
 };

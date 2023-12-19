@@ -269,3 +269,10 @@ typedef enum
     HIGH_ALERT,
     DANGER
 } WbgtIndex;
+
+typedef enum
+{
+    QUESTION,
+    WIN,
+    LOSE
+} HighAndLowState;

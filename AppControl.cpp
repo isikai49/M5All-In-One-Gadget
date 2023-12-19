@@ -1,13 +1,12 @@
 #include "AppControl.h"
 #include <Arduino.h>
 #include <M5Stack.h>
-
+#include <time.h>
 MdLcd mlcd;
 MdWBGTMonitor mwbgt;
 MdMusicPlayer mmplay;
 MdMeasureDistance mmdist;
 MdDateTime mdtime;
-
 const char *g_str_orange[] = {
     COMMON_ORANGE0_IMG_PATH,
     COMMON_ORANGE1_IMG_PATH,
@@ -20,7 +19,6 @@ const char *g_str_orange[] = {
     COMMON_ORANGE8_IMG_PATH,
     COMMON_ORANGE9_IMG_PATH,
 };
-
 const char *g_str_blue[] = {
     COMMON_BLUE0_IMG_PATH,
     COMMON_BLUE1_IMG_PATH,
@@ -33,10 +31,8 @@ const char *g_str_blue[] = {
     COMMON_BLUE8_IMG_PATH,
     COMMON_BLUE9_IMG_PATH,
 };
-
-typedef enum
-{
-    TRUMP_HEART1_IMG_PATH = 1,
+const char *Heart[] = {
+    TRUMP_HEART1_IMG_PATH,
     TRUMP_HEART2_IMG_PATH,
     TRUMP_HEART3_IMG_PATH,
     TRUMP_HEART4_IMG_PATH,
@@ -45,11 +41,9 @@ typedef enum
     TRUMP_HEART7_IMG_PATH,
     TRUMP_HEART8_IMG_PATH,
     TRUMP_HEART9_IMG_PATH,
-}Heart;
-
-typedef enum
-{
-    TRUMP_SPADE1_IMG_PATH = 1,
+};
+const char *Spade[] = {
+    TRUMP_SPADE1_IMG_PATH,
     TRUMP_SPADE2_IMG_PATH,
     TRUMP_SPADE3_IMG_PATH,
     TRUMP_SPADE4_IMG_PATH,
@@ -58,71 +52,58 @@ typedef enum
     TRUMP_SPADE7_IMG_PATH,
     TRUMP_SPADE8_IMG_PATH,
     TRUMP_SPADE9_IMG_PATH,
-}Spade;
-
+};
 void AppControl::setBtnAFlg(bool flg)
 {
     m_flag_btnA_is_pressed = flg;
 }
-
 void AppControl::setBtnBFlg(bool flg)
 {
     m_flag_btnB_is_pressed = flg;
 }
-
 void AppControl::setBtnCFlg(bool flg)
 {
     m_flag_btnC_is_pressed = flg;
 }
-
 void AppControl::setBtnAllFlgFalse()
 {
     m_flag_btnA_is_pressed = false;
     m_flag_btnB_is_pressed = false;
     m_flag_btnC_is_pressed = false;
 }
-
 State AppControl::getState()
 {
     return m_state;
 }
-
 void AppControl::setState(State state)
 {
     m_state = state;
 }
-
 Action AppControl::getAction()
 {
     return m_action;
 }
-
 void AppControl::setAction(Action action)
 {
     m_action = action;
 }
-
 void AppControl::setStateMachine(State state, Action action)
 {
     setState(state);
     setAction(action);
 }
-
 FocusState AppControl::getFocusState()
 {
     return m_focus_state;
 }
-
 void AppControl::setFocusState(FocusState fs)
 {
     m_focus_state = fs;
 }
-
 void AppControl::displayTitleInit()
 {
     mlcd.displayJpgImageCoordinate(TITLE_IMG_PATH, TITLE_X_CRD, TITLE_Y_CRD);
 }
-
 void AppControl::displayMenuInit()
 {
     mlcd.clearDisplay();
@@ -135,7 +116,6 @@ void AppControl::displayMenuInit()
     mlcd.displayJpgImageCoordinate(COMMON_BUTTON_DECIDE_IMG_PATH, MENU_DECIDE_X_CRD, MENU_DECIDE_Y_CRD);
     mlcd.displayJpgImageCoordinate(COMMON_BUTTON_DOWN_IMG_PATH, MENU_DOWN_X_CRD, MENU_DOWN_Y_CRD);
 }
-
 void AppControl::focusChangeImg(FocusState current_state, FocusState next_state)
 {
     switch (current_state)
@@ -176,7 +156,6 @@ void AppControl::focusChangeImg(FocusState current_state, FocusState next_state)
         break;
     }
 }
-
 void AppControl::displayWBGTInit()
 {
     mlcd.fillBackgroundWhite();
@@ -189,7 +168,6 @@ void AppControl::displayWBGTInit()
     mlcd.displayJpgImageCoordinate(COMMON_BUTTON_BACK_IMG_PATH, WBGT_BACK_X_CRD, WBGT_BACK_Y_CRD);
     displayTempHumiIndex();
 }
-
 void AppControl::displayTempHumiIndex()
 {
     double t;
@@ -245,7 +223,6 @@ void AppControl::displayTempHumiIndex()
         break;
     }
 }
-
 void AppControl::displayMusicInit()
 {
     mlcd.fillBackgroundWhite();
@@ -255,7 +232,6 @@ void AppControl::displayMusicInit()
     mlcd.displayJpgImageCoordinate(COMMON_BUTTON_NEXT_IMG_PATH, MUSIC_NEXT_X_CRD, MUSIC_NEXT_Y_CRD);
     displayMusicTitle();
 }
-
 void AppControl::displayMusicStop()
 {
     mlcd.displayJpgImageCoordinate(MUSIC_NOWSTOPPING_IMG_PATH, MUSIC_NOTICE_X_CRD, MUSIC_NOTICE_Y_CRD);
@@ -263,19 +239,16 @@ void AppControl::displayMusicStop()
     mlcd.displayJpgImageCoordinate(COMMON_BUTTON_BACK_IMG_PATH, MUSIC_BACK_X_CRD, MUSIC_BACK_Y_CRD);
     mlcd.displayJpgImageCoordinate(COMMON_BUTTON_NEXT_IMG_PATH, MUSIC_NEXT_X_CRD, MUSIC_NEXT_Y_CRD);
 }
-
 void AppControl::displayMusicTitle()
 {
     mlcd.displayText(mmplay.getTitle(), MUSIC_TITLE_X_CRD, MUSIC_TITLE_Y_CRD);
 }
-
 void AppControl::displayNextMusic()
 {
     mmplay.selectNextMusic();
     mlcd.displayText("                             ", MUSIC_TITLE_X_CRD, MUSIC_TITLE_Y_CRD);
     displayMusicTitle();
 }
-
 void AppControl::displayMusicPlay()
 {
     mlcd.displayJpgImageCoordinate(MUSIC_NOWPLAYING_IMG_PATH, MUSIC_NOTICE_X_CRD, MUSIC_NOTICE_Y_CRD);
@@ -283,7 +256,6 @@ void AppControl::displayMusicPlay()
     mlcd.displayJpgImageCoordinate(COMMON_BUTTON_FILLWHITE_IMG_PATH, MUSIC_BACK_X_CRD, MUSIC_BACK_Y_CRD);
     mlcd.displayJpgImageCoordinate(COMMON_BUTTON_FILLWHITE_IMG_PATH, MUSIC_NEXT_X_CRD, MUSIC_NEXT_Y_CRD);
 }
-
 void AppControl::displayMeasureInit()
 {
     mlcd.fillBackgroundWhite();
@@ -293,7 +265,6 @@ void AppControl::displayMeasureInit()
     mlcd.displayJpgImageCoordinate(COMMON_BUTTON_BACK_IMG_PATH, MEASURE_BACK_X_CRD, MEASURE_BACK_Y_CRD);
     displayMeasureDistance();
 }
-
 void AppControl::displayMeasureDistance()
 {
     double distance = mmdist.getDistance();
@@ -322,20 +293,25 @@ void AppControl::displayMeasureDistance()
         mlcd.displayJpgImageCoordinate(g_str_blue[dis % 10], MEASURE_DECIMAL_X_CRD, MEASURE_DECIMAL_Y_CRD);
     }
 }
-
 void AppControl::displayDateInit()
 {
     mlcd.fillBackgroundWhite();
     mlcd.displayJpgImageCoordinate(DATE_NOTICE_IMG_PATH, DATE_NOTICE_X_CRD, DATE_NOTICE_Y_CRD);
     mlcd.displayJpgImageCoordinate(COMMON_BUTTON_BACK_IMG_PATH, DATE_BACK_X_CRD, DATE_BACK_Y_CRD);
 }
-
 void AppControl::displayDateUpdate()
 {
     mlcd.displayDateText(mdtime.readDate(), DATE_YYYYMMDD_X_CRD, DATE_YYYYMMDD_Y_CRD);
     mlcd.displayDateText(mdtime.readTime(), DATE_HHmmSS_X_CRD, DATE_HHmmSS_Y_CRD);
 }
-
+HighAndLowState AppControl::getHighAndLowState()
+{
+    return hl_state;
+}
+void AppControl::setHighAndLowState(HighAndLowState state)
+{
+    hl_state = state;
+}
 void AppControl::displayHIGHANDLOWTitleInit()
 {
     mlcd.fillBackgroundWhite();
@@ -344,23 +320,56 @@ void AppControl::displayHIGHANDLOWTitleInit()
     mlcd.displayJpgImageCoordinate(COMMON_BUTTON_BACK_IMG_PATH, HIGHANDLOW_BACK_X_CRD, HIGHANDLOW_BACK_Y_CRD);
     mlcd.displayJpgImageCoordinate(TRUMP_RECORD_IMG_PATH, HIGHANDLOW_RECORD_X_CRD, HIGHANDLOW_RECORD_Y_CRD);
 }
-
-void AppControl::displayHIGHANDLOWPlayInit()
+void AppControl::displayHIGHANDLOWPlayQuestion(int* trumpR)
 {
     mlcd.fillBackgroundWhite();
+    mlcd.displayJpgImageCoordinate(Heart[*trumpR], HIGHANDLOW_L_TRUMP_X_CRD, HIGHANDLOW_L_TRUMP_Y_CRD);
     mlcd.displayJpgImageCoordinate(TRUMP_SPADE_BACK_IMG_PATH, HIGHANDLOW_R_TRUMP_X_CRD, HIGHANDLOW_R_TRUMP_Y_CRD);
+    mlcd.displayJpgImageCoordinate(TRUMP_HIGHANDLOW_IMG_PATH, HIGHANDLOW_QUESTION_X_CRD, HIGHANDLOW_QUESTION_Y_CRD);
     mlcd.displayJpgImageCoordinate(TRUMP_HIGH_IMG_PATH, HIGHANDLOW_START_X_CRD, HIGHANDLOW_START_Y_CRD);
     mlcd.displayJpgImageCoordinate(TRUMP_LOW_IMG_PATH, HIGHANDLOW_RECORD_X_CRD, HIGHANDLOW_RECORD_Y_CRD);
 }
+void AppControl::displayHIGHANDLOWPlayRandom(int* trumpL, int* trumpR)
+{
+    srand((unsigned)time(NULL));
 
+    *trumpL = rand() % 9;
+    do
+    {
+        srand((unsigned)time(NULL));
+        *trumpR = rand() % 9;
+    } while ((*trumpL) == (*trumpR));
+}
+void AppControl::displayHIGHANDLOWPlayResult(HighAndLowState state, int* trumpL)
+{
+    mlcd.displayJpgImageCoordinate(Spade[*trumpL], HIGHANDLOW_R_TRUMP_X_CRD, HIGHANDLOW_R_TRUMP_Y_CRD);
+    mlcd.displayDateText("                             ", HIGHANDLOW_QUESTION_X_CRD, HIGHANDLOW_QUESTION_Y_CRD);
+    mlcd.displayJpgImageCoordinate(TRUMP_ONEMORE_IMG_PATH, HIGHANDLOW_START_X_CRD, HIGHANDLOW_START_Y_CRD);
+    mlcd.displayJpgImageCoordinate(COMMON_BUTTON_BACK_IMG_PATH, HIGHANDLOW_BACK_X_CRD, HIGHANDLOW_BACK_Y_CRD);
+    if (state==WIN)
+    {
+        mlcd.displayJpgImageCoordinate(TRUMP_WIN_IMG_PATH, HIGHANDLOW_WIN_X_CRD, HIGHANDLOW_WIN_Y_CRD);
+    }
+
+    else if (state==LOSE)
+    {
+        mlcd.displayJpgImageCoordinate(TRUMP_LOSE_IMG_PATH, HIGHANDLOW_LOSE_X_CRD, HIGHANDLOW_LOSE_Y_CRD);
+    }
+}
 void AppControl::displayHIGHANDLOWRecord()
 {
     mlcd.fillBackgroundWhite();
     mlcd.displayJpgImageCoordinate(COMMON_BUTTON_BACK_IMG_PATH, HIGHANDLOW_BACK_X_CRD, HIGHANDLOW_BACK_Y_CRD);
-}
+    /*for(int i = 0; i < 10; i++)
+    {
 
+    }*/
+}
 void AppControl::controlApplication()
 {
+    static int count = 0;
+    static int trumpR;
+    static int trumpL;
     mmplay.init();
     while (1)
     {
@@ -390,9 +399,7 @@ void AppControl::controlApplication()
                 break;
             }
             break;
-
         case MENU:
-
             switch (getAction())
             {
             case ENTRY:
@@ -447,7 +454,7 @@ void AppControl::controlApplication()
                     if ((upcommand >= 2) && (downcommand == 2))
                     {
                         setFocusState(MENU_HIGHANDLOW);
-                        Serial.print("HIGHANDLOW OK");
+                        Serial.print("HIGHANDLOW MODE");
                     }
                     setStateMachine(MENU, EXIT);
                     setBtnAllFlgFalse();
@@ -502,7 +509,7 @@ void AppControl::controlApplication()
                     setStateMachine(DATE, ENTRY);
                     break;
                 case MENU_HIGHANDLOW:
-                    setStateMachine(HIGHANDLOW, ENTRY);
+                    setStateMachine(HIGHANDLOW_TITLE, ENTRY);
                     break;
                 }
                 break;
@@ -510,11 +517,8 @@ void AppControl::controlApplication()
             default:
                 break;
             }
-
             break;
-
         case WBGT:
-
             switch (getAction())
             {
             case ENTRY:
@@ -542,9 +546,7 @@ void AppControl::controlApplication()
             default:
                 break;
             }
-
             break;
-
         case MUSIC_STOP:
             switch (getAction())
             {
@@ -583,11 +585,8 @@ void AppControl::controlApplication()
             default:
                 break;
             }
-
             break;
-
         case MUSIC_PLAY:
-
             switch (getAction())
             {
             case ENTRY:
@@ -615,11 +614,8 @@ void AppControl::controlApplication()
             default:
                 break;
             }
-
             break;
-
         case MEASURE:
-
             switch (getAction())
             {
             case ENTRY:
@@ -645,11 +641,8 @@ void AppControl::controlApplication()
             default:
                 break;
             }
-
             break;
-
         case DATE:
-
             switch (getAction())
             {
             case ENTRY:
@@ -677,15 +670,12 @@ void AppControl::controlApplication()
             default:
                 break;
             }
-
             break;
-
         case HIGHANDLOW_TITLE:
-
             switch (getAction())
             {
             case ENTRY:
-                displayHIGHANDLOWInit();
+                displayHIGHANDLOWTitleInit();
                 setStateMachine(HIGHANDLOW_TITLE, DO);
                 break;
 
@@ -725,22 +715,89 @@ void AppControl::controlApplication()
                 break;
             }
             break;
-
         case HIGHANDLOW_GAME:
 
             switch (getAction())
             {
             case ENTRY:
-                displayHIGHANDLOWPlayInit();
+                setHighAndLowState(QUESTION);
+                displayHIGHANDLOWPlayRandom(&trumpL, &trumpR);
+                displayHIGHANDLOWPlayQuestion(&trumpR);
                 setStateMachine(HIGHANDLOW_GAME, DO);
                 break;
 
             case DO:
-                setStateMachine(HIGHANDLOW_GAME, EXIT);
+                switch (getHighAndLowState())
+                {
+                case QUESTION:
+                    if (m_flag_btnA_is_pressed)
+                    {
+                        if (trumpR > trumpL)
+                        { // 勝ち
+                            setHighAndLowState(WIN);
+                            setBtnAllFlgFalse();
+                        }
+
+                        if (trumpR < trumpL)
+                        { // 負け
+                            setHighAndLowState(LOSE);
+                            setBtnAllFlgFalse();
+                        }
+                    }
+                    else if (m_flag_btnC_is_pressed)
+                    {
+                        if (trumpR < trumpL)
+                        { // 勝ち
+                            setHighAndLowState(WIN);
+                            setBtnAllFlgFalse();
+                        }
+
+                        if (trumpR > trumpL)
+                        { // 負け
+                            setHighAndLowState(LOSE);
+                            setBtnAllFlgFalse();
+                        }
+                    }
+                    break;
+
+                case WIN:
+                    displayHIGHANDLOWPlayResult(getHighAndLowState(), &trumpL);
+                    if (m_flag_btnA_is_pressed)
+                    {
+                        setStateMachine(HIGHANDLOW_GAME, EXIT);
+                    }
+                    else if (m_flag_btnB_is_pressed)
+                    {
+                        setStateMachine(HIGHANDLOW_GAME, EXIT);
+                    }
+                    break;
+                case LOSE:
+                    displayHIGHANDLOWPlayResult(getHighAndLowState(), &trumpL);
+                    if (m_flag_btnA_is_pressed)
+                    {
+                        setStateMachine(HIGHANDLOW_GAME, EXIT);
+                    }
+                    else if (m_flag_btnB_is_pressed)
+                    {
+                        setStateMachine(HIGHANDLOW_GAME, EXIT);
+                    }
+                    break;
+
+                default:
+                    break;
+                }
                 break;
 
             case EXIT:
-                setStateMachine(MENU, ENTRY);
+                count++;
+                if (m_flag_btnA_is_pressed)
+                {
+                    setStateMachine(HIGHANDLOW_GAME, ENTRY);
+                }
+                else if (m_flag_btnB_is_pressed)
+                {
+                    setStateMachine(HIGHANDLOW_TITLE, ENTRY);
+                }
                 setBtnAllFlgFalse();
                 break;
 
@@ -758,7 +815,7 @@ void AppControl::controlApplication()
                 setStateMachine(HIGHANDLOW_RECORD, DO);
                 break;
 
-            if (m_flag_btnB_is_pressed)
+                if (m_flag_btnB_is_pressed)
                 {
                     setStateMachine(HIGHANDLOW_RECORD, EXIT);
                 }
