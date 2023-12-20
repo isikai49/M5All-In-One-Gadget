@@ -56,8 +56,9 @@ public: // publicはどこからでもアクセス可能
     void displayDateUpdate();
     void controlApplication();
     void displayHIGHANDLOWTitleInit();
-    void displayHIGHANDLOWPlayQuestion(int* trumpR);
-    void displayHIGHANDLOWPlayRandom(int* trumpL, int* trumpR);
-    void displayHIGHANDLOWPlayResult(HighAndLowState state, int* trumpL);
+    void displayHIGHANDLOWPlayQuestion(int* trumpL);
+    void displayHIGHANDLOWPlayRandom(int *trump);
+    void displayHIGHANDLOWPlayResult(HighAndLowState state, int *trumpR);
+    void setHIGHANDLOWRecordData(int *win);
     void displayHIGHANDLOWRecord();
 };

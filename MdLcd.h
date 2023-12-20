@@ -14,4 +14,5 @@ public:
     void fillBackgroundWhite();
     void displayText(const char* text, int x, int y);
     void displayDateText(String text, int x, int y);
+    void displayRecordText(String Date, String Time, int count, int x, int y);
 };

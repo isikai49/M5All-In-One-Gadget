@@ -7,6 +7,14 @@ MdWBGTMonitor mwbgt;
 MdMusicPlayer mmplay;
 MdMeasureDistance mmdist;
 MdDateTime mdtime;
+typedef struct
+{
+    String Date;
+    String Time;
+    int count;
+    int x;
+    int y;
+} HALData;
 const char *g_str_orange[] = {
     COMMON_ORANGE0_IMG_PATH,
     COMMON_ORANGE1_IMG_PATH,
@@ -320,54 +328,59 @@ void AppControl::displayHIGHANDLOWTitleInit()
     mlcd.displayJpgImageCoordinate(COMMON_BUTTON_BACK_IMG_PATH, HIGHANDLOW_BACK_X_CRD, HIGHANDLOW_BACK_Y_CRD);
     mlcd.displayJpgImageCoordinate(TRUMP_RECORD_IMG_PATH, HIGHANDLOW_RECORD_X_CRD, HIGHANDLOW_RECORD_Y_CRD);
 }
-void AppControl::displayHIGHANDLOWPlayQuestion(int* trumpR)
+void AppControl::displayHIGHANDLOWPlayQuestion(int *trumpL)
 {
     mlcd.fillBackgroundWhite();
-    mlcd.displayJpgImageCoordinate(Heart[*trumpR], HIGHANDLOW_L_TRUMP_X_CRD, HIGHANDLOW_L_TRUMP_Y_CRD);
+    mlcd.displayJpgImageCoordinate(Heart[*trumpL], HIGHANDLOW_L_TRUMP_X_CRD, HIGHANDLOW_L_TRUMP_Y_CRD);
     mlcd.displayJpgImageCoordinate(TRUMP_SPADE_BACK_IMG_PATH, HIGHANDLOW_R_TRUMP_X_CRD, HIGHANDLOW_R_TRUMP_Y_CRD);
     mlcd.displayJpgImageCoordinate(TRUMP_HIGHANDLOW_IMG_PATH, HIGHANDLOW_QUESTION_X_CRD, HIGHANDLOW_QUESTION_Y_CRD);
     mlcd.displayJpgImageCoordinate(TRUMP_HIGH_IMG_PATH, HIGHANDLOW_START_X_CRD, HIGHANDLOW_START_Y_CRD);
     mlcd.displayJpgImageCoordinate(TRUMP_LOW_IMG_PATH, HIGHANDLOW_RECORD_X_CRD, HIGHANDLOW_RECORD_Y_CRD);
 }
-void AppControl::displayHIGHANDLOWPlayRandom(int* trumpL, int* trumpR)
+void AppControl::displayHIGHANDLOWPlayRandom(int *trump)
 {
     srand((unsigned)time(NULL));
-
-    *trumpL = rand() % 9;
-    do
-    {
-        srand((unsigned)time(NULL));
-        *trumpR = rand() % 9;
-    } while ((*trumpL) == (*trumpR));
+    *trump = rand() % 9;
 }
-void AppControl::displayHIGHANDLOWPlayResult(HighAndLowState state, int* trumpL)
+void AppControl::displayHIGHANDLOWPlayResult(HighAndLowState state, int *trumpR)
 {
-    mlcd.displayJpgImageCoordinate(Spade[*trumpL], HIGHANDLOW_R_TRUMP_X_CRD, HIGHANDLOW_R_TRUMP_Y_CRD);
-    mlcd.displayDateText("                             ", HIGHANDLOW_QUESTION_X_CRD, HIGHANDLOW_QUESTION_Y_CRD);
+    mlcd.displayJpgImageCoordinate(Spade[*trumpR], HIGHANDLOW_R_TRUMP_X_CRD, HIGHANDLOW_R_TRUMP_Y_CRD);
+    mlcd.displayDateText("          ", HIGHANDLOW_QUESTION_X_CRD, HIGHANDLOW_QUESTION_Y_CRD);
     mlcd.displayJpgImageCoordinate(TRUMP_ONEMORE_IMG_PATH, HIGHANDLOW_START_X_CRD, HIGHANDLOW_START_Y_CRD);
     mlcd.displayJpgImageCoordinate(COMMON_BUTTON_BACK_IMG_PATH, HIGHANDLOW_BACK_X_CRD, HIGHANDLOW_BACK_Y_CRD);
-    if (state==WIN)
+    mlcd.displayJpgImageCoordinate(COMMON_BUTTON_FILLWHITE_IMG_PATH, HIGHANDLOW_RECORD_X_CRD, HIGHANDLOW_RECORD_Y_CRD);
+    if (state == WIN)
     {
         mlcd.displayJpgImageCoordinate(TRUMP_WIN_IMG_PATH, HIGHANDLOW_WIN_X_CRD, HIGHANDLOW_WIN_Y_CRD);
     }
 
-    else if (state==LOSE)
+    else if (state == LOSE)
     {
         mlcd.displayJpgImageCoordinate(TRUMP_LOSE_IMG_PATH, HIGHANDLOW_LOSE_X_CRD, HIGHANDLOW_LOSE_Y_CRD);
     }
+}
+void AppControl::setHIGHANDLOWRecordData(int *win)
+{
+    HALData Record[10];
+    for(int i = 0; i < 9; i++)
+    {
+        Record[i+1] = {Record[i].Date, Record[i].Time, Record[i].count, 0, (i*2)};
+    }
+    Record[0] = {mdtime.readDate(), mdtime.readTime(), (*win), 0, 0};
 }
 void AppControl::displayHIGHANDLOWRecord()
 {
     mlcd.fillBackgroundWhite();
     mlcd.displayJpgImageCoordinate(COMMON_BUTTON_BACK_IMG_PATH, HIGHANDLOW_BACK_X_CRD, HIGHANDLOW_BACK_Y_CRD);
-    /*for(int i = 0; i < 10; i++)
+    for(int i = 0; i < 10; i++)
     {
-
-    }*/
+        mlcd.displayDateText(Record[i]);
+    }
 }
+
 void AppControl::controlApplication()
 {
-    static int count = 0;
+    static int win = 0;
     static int trumpR;
     static int trumpL;
     mmplay.init();
@@ -721,8 +734,8 @@ void AppControl::controlApplication()
             {
             case ENTRY:
                 setHighAndLowState(QUESTION);
-                displayHIGHANDLOWPlayRandom(&trumpL, &trumpR);
-                displayHIGHANDLOWPlayQuestion(&trumpR);
+                displayHIGHANDLOWPlayRandom(&trumpL);
+                displayHIGHANDLOWPlayQuestion(&trumpL);
                 setStateMachine(HIGHANDLOW_GAME, DO);
                 break;
 
@@ -732,36 +745,50 @@ void AppControl::controlApplication()
                 case QUESTION:
                     if (m_flag_btnA_is_pressed)
                     {
-                        if (trumpR > trumpL)
+                        do
+                        {
+                            displayHIGHANDLOWPlayRandom(&trumpR);
+                        } while (trumpL == trumpR);
+                        if (trumpL > trumpR)
                         { // 勝ち
                             setHighAndLowState(WIN);
-                            setBtnAllFlgFalse();
+                            displayHIGHANDLOWPlayResult(getHighAndLowState(), &trumpR);
+                            win++;
                         }
-
-                        if (trumpR < trumpL)
+                        else if (trumpL < trumpR)
                         { // 負け
                             setHighAndLowState(LOSE);
-                            setBtnAllFlgFalse();
+                            displayHIGHANDLOWPlayResult(getHighAndLowState(), &trumpR);
+                            setHIGHANDLOWRecordData(&win);
+                            win = 0;
                         }
+                        setBtnAllFlgFalse();
                     }
                     else if (m_flag_btnC_is_pressed)
                     {
-                        if (trumpR < trumpL)
+                        do
+                        {
+                            displayHIGHANDLOWPlayRandom(&trumpR);
+                        } while ((trumpL) == (trumpR));
+                        if (trumpL < trumpR)
                         { // 勝ち
                             setHighAndLowState(WIN);
-                            setBtnAllFlgFalse();
+                            displayHIGHANDLOWPlayResult(getHighAndLowState(), &trumpR);
+                            win++;
                         }
-
-                        if (trumpR > trumpL)
+                        else if (trumpL > trumpR)
                         { // 負け
                             setHighAndLowState(LOSE);
-                            setBtnAllFlgFalse();
+                            displayHIGHANDLOWPlayResult(getHighAndLowState(), &trumpR);
+                            setHIGHANDLOWRecordData(&win);
+                            win = 0;
                         }
+                        setBtnAllFlgFalse();
                     }
                     break;
 
                 case WIN:
-                    displayHIGHANDLOWPlayResult(getHighAndLowState(), &trumpL);
+
                     if (m_flag_btnA_is_pressed)
                     {
                         setStateMachine(HIGHANDLOW_GAME, EXIT);
@@ -769,10 +796,12 @@ void AppControl::controlApplication()
                     else if (m_flag_btnB_is_pressed)
                     {
                         setStateMachine(HIGHANDLOW_GAME, EXIT);
+                        setHIGHANDLOWRecordData(&win);
+                        win = 0;
                     }
                     break;
                 case LOSE:
-                    displayHIGHANDLOWPlayResult(getHighAndLowState(), &trumpL);
+
                     if (m_flag_btnA_is_pressed)
                     {
                         setStateMachine(HIGHANDLOW_GAME, EXIT);
@@ -789,7 +818,6 @@ void AppControl::controlApplication()
                 break;
 
             case EXIT:
-                count++;
                 if (m_flag_btnA_is_pressed)
                 {
                     setStateMachine(HIGHANDLOW_GAME, ENTRY);
@@ -814,12 +842,12 @@ void AppControl::controlApplication()
                 displayHIGHANDLOWRecord();
                 setStateMachine(HIGHANDLOW_RECORD, DO);
                 break;
-
+            case DO:
                 if (m_flag_btnB_is_pressed)
                 {
                     setStateMachine(HIGHANDLOW_RECORD, EXIT);
                 }
-
+                break;
             case EXIT:
                 if (m_flag_btnB_is_pressed)
                 {
