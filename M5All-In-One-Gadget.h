@@ -229,7 +229,6 @@
 #define HIGHANDLOW_WIN_Y_CRD 135
 #define HIGHANDLOW_LOSE_X_CRD 100
 #define HIGHANDLOW_LOSE_Y_CRD 135
-
 typedef enum
 {
     TITLE,
@@ -243,14 +242,12 @@ typedef enum
     HIGHANDLOW_GAME,
     HIGHANDLOW_RECORD
 } State;
-
 typedef enum
 {
     ENTRY,
     DO,
     EXIT
 } Action;
-
 typedef enum
 {
     MENU_WBGT,
@@ -259,7 +256,6 @@ typedef enum
     MENU_DATE,
     MENU_HIGHANDLOW
 } FocusState;
-
 typedef enum
 {
     SAFE,
@@ -268,7 +264,6 @@ typedef enum
     HIGH_ALERT,
     DANGER
 } WbgtIndex;
-
 typedef enum
 {
     QUESTION,

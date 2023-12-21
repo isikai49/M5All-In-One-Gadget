@@ -41,6 +41,6 @@ void MdLcd::displayRecordText(String Date, String Time, int count, int x, int y)
 {
     M5.Lcd.setCursor(x, y);
     M5.Lcd.setTextColor(0x0000, 0xFFFF);
-    M5.Lcd.setTextSize(2);
-    M5.Lcd.print(Date+" "+Time+count+"straight wins");
+    M5.Lcd.setTextSize(1);
+    M5.Lcd.print(Date+" "+Time+" "+count+" straight wins");
 }

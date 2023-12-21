@@ -2,19 +2,12 @@
 #include <Arduino.h>
 #include <M5Stack.h>
 #include <time.h>
+int gamecount = 0;
 MdLcd mlcd;
 MdWBGTMonitor mwbgt;
 MdMusicPlayer mmplay;
 MdMeasureDistance mmdist;
 MdDateTime mdtime;
-typedef struct
-{
-    String Date;
-    String Time;
-    int count;
-    int x;
-    int y;
-} HALData;
 const char *g_str_orange[] = {
     COMMON_ORANGE0_IMG_PATH,
     COMMON_ORANGE1_IMG_PATH,
@@ -359,25 +352,34 @@ void AppControl::displayHIGHANDLOWPlayResult(HighAndLowState state, int *trumpR)
         mlcd.displayJpgImageCoordinate(TRUMP_LOSE_IMG_PATH, HIGHANDLOW_LOSE_X_CRD, HIGHANDLOW_LOSE_Y_CRD);
     }
 }
-void AppControl::setHIGHANDLOWRecordData(int *win)
+void AppControl::setHIGHANDLOWRecordData(HALData *Record, int win)
 {
-    HALData Record[10];
-    for(int i = 0; i < 9; i++)
+    for (int i = 9; i > 0; i--)
     {
-        Record[i+1] = {Record[i].Date, Record[i].Time, Record[i].count, 0, (i*2)};
+        Record[i].Date = Record[i - 1].Date;
+        Record[i].Time = Record[i - 1].Time;
+        Record[i].count = Record[i - 1].count;
+        Record[i].x = 0;
+        Record[i].y = i * 12;
     }
-    Record[0] = {mdtime.readDate(), mdtime.readTime(), (*win), 0, 0};
+    Record[0].Date = mdtime.readDate();
+    Record[0].Time = mdtime.readTime();
+    Record[0].count = win;
+    Record[0].x = 0;
+    Record[0].y = 0;
 }
 void AppControl::displayHIGHANDLOWRecord()
 {
     mlcd.fillBackgroundWhite();
     mlcd.displayJpgImageCoordinate(COMMON_BUTTON_BACK_IMG_PATH, HIGHANDLOW_BACK_X_CRD, HIGHANDLOW_BACK_Y_CRD);
-    for(int i = 0; i < 10; i++)
+    if (gamecount > 0)
     {
-        mlcd.displayDateText(Record[i]);
+        for (int i = 0; i < gamecount; i++)
+        {
+            mlcd.displayRecordText(Record[i].Date, Record[i].Time, Record[i].count, Record[i].x, Record[i].y);
+        }
     }
 }
-
 void AppControl::controlApplication()
 {
     static int win = 0;
@@ -693,7 +695,7 @@ void AppControl::controlApplication()
                 break;
 
             case DO:
-                if (m_flag_btnC_is_pressed)
+                if (m_flag_btnA_is_pressed)
                 {
                     setStateMachine(HIGHANDLOW_TITLE, EXIT);
                 }
@@ -701,7 +703,7 @@ void AppControl::controlApplication()
                 {
                     setStateMachine(HIGHANDLOW_TITLE, EXIT);
                 }
-                else if (m_flag_btnA_is_pressed)
+                else if (m_flag_btnC_is_pressed)
                 {
                     setStateMachine(HIGHANDLOW_TITLE, EXIT);
                 }
@@ -733,6 +735,7 @@ void AppControl::controlApplication()
             switch (getAction())
             {
             case ENTRY:
+                mdtime.readDate();
                 setHighAndLowState(QUESTION);
                 displayHIGHANDLOWPlayRandom(&trumpL);
                 displayHIGHANDLOWPlayQuestion(&trumpL);
@@ -750,17 +753,21 @@ void AppControl::controlApplication()
                             displayHIGHANDLOWPlayRandom(&trumpR);
                         } while (trumpL == trumpR);
                         if (trumpL > trumpR)
-                        { // 勝ち
+                        {
                             setHighAndLowState(WIN);
                             displayHIGHANDLOWPlayResult(getHighAndLowState(), &trumpR);
                             win++;
                         }
                         else if (trumpL < trumpR)
-                        { // 負け
+                        {
                             setHighAndLowState(LOSE);
                             displayHIGHANDLOWPlayResult(getHighAndLowState(), &trumpR);
-                            setHIGHANDLOWRecordData(&win);
+                            setHIGHANDLOWRecordData(Record, win);
                             win = 0;
+                            if (gamecount < 10)
+                            {
+                                gamecount++;
+                            }
                         }
                         setBtnAllFlgFalse();
                     }
@@ -771,17 +778,21 @@ void AppControl::controlApplication()
                             displayHIGHANDLOWPlayRandom(&trumpR);
                         } while ((trumpL) == (trumpR));
                         if (trumpL < trumpR)
-                        { // 勝ち
+                        {
                             setHighAndLowState(WIN);
                             displayHIGHANDLOWPlayResult(getHighAndLowState(), &trumpR);
                             win++;
                         }
                         else if (trumpL > trumpR)
-                        { // 負け
+                        {
                             setHighAndLowState(LOSE);
                             displayHIGHANDLOWPlayResult(getHighAndLowState(), &trumpR);
-                            setHIGHANDLOWRecordData(&win);
+                            setHIGHANDLOWRecordData(Record, win);
                             win = 0;
+                            if (gamecount < 10)
+                            {
+                                gamecount++;
+                            }
                         }
                         setBtnAllFlgFalse();
                     }
@@ -796,8 +807,12 @@ void AppControl::controlApplication()
                     else if (m_flag_btnB_is_pressed)
                     {
                         setStateMachine(HIGHANDLOW_GAME, EXIT);
-                        setHIGHANDLOWRecordData(&win);
+                        setHIGHANDLOWRecordData(Record, win);
                         win = 0;
+                        if (gamecount < 10)
+                        {
+                            gamecount++;
+                        }
                     }
                     break;
                 case LOSE:

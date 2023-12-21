@@ -7,7 +7,14 @@
 #include "MdMeasureDistance.h"
 #include "MdMusicPlayer.h"
 #include "MdWBGTMonitor.h"
-
+typedef struct
+{
+    String Date;
+    String Time;
+    int count;
+    int x;
+    int y;
+} HALData;
 class AppControl // classの定義
 {
 private: // privateはクラス内からしかアクセスできない
@@ -24,6 +31,8 @@ private: // privateはクラス内からしかアクセスできない
 
     /* GUI State */
     FocusState m_focus_state = MENU_WBGT;
+
+    HALData Record[10];
 
 public: // publicはどこからでもアクセス可能
     State getState();
@@ -59,6 +68,6 @@ public: // publicはどこからでもアクセス可能
     void displayHIGHANDLOWPlayQuestion(int* trumpL);
     void displayHIGHANDLOWPlayRandom(int *trump);
     void displayHIGHANDLOWPlayResult(HighAndLowState state, int *trumpR);
-    void setHIGHANDLOWRecordData(int *win);
+    void setHIGHANDLOWRecordData(HALData *Record, int win);
     void displayHIGHANDLOWRecord();
 };
